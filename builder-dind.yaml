@@ -1,24 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: builder-deployment
+  name: builder-dind-deployment
   labels:
-    app: builder
+    app: builder-dind
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: builder
+      app: builder-dind
   template:
     metadata:
       labels:
-        app: builder
+        app: builder-dind
     spec:
+      volumes:
+      - name: dockerfile-volume
+        configMap:
+          name: dockerfile-configmap
       containers:
-      - name: builder
+      - name: builder-dind
         image: docker:dind
         securityContext:
           privileged: true
+        volumeMounts:
+        - name: dockerfile-volume
+          mountPath: /dockerfile
         resources:
           limits:
             memory: "1Gi"
