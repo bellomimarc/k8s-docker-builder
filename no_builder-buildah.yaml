@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: builder-buildah-deployment
+  labels:
+    app: builder-buildah
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: builder-buildah
+  template:
+    metadata:
+      labels:
+        app: builder-buildah
+    spec:
+      volumes:
+      - name: dockerfile-volume
+        configMap:
+          name: dockerfile-configmap
+      containers:
+      - name: builder-buildah
+        image: buildah/buildah
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: dockerfile-volume
+          mountPath: /dockerfile
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
