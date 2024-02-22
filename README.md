@@ -1,14 +1,29 @@
 # k8s-docker-builder #
 
-kubectl --context=minikube -n default create -f dockerfile-configmap.yaml 
+## build in k8s without priviledged ##
 
-kubectl --context=minikube -n default create -f builder-dind.yaml
-
-kubectl --context=minikube -n default delete -f builder-dind.yaml
+```bash
+kubectl --context=minikube -n default create -f dockerfile-configmap.yaml
 
 kubectl --context=minikube -n default create -f job-builder-kaniko.yaml
+```
 
-kubectl --context=minikube -n default exec --stdin --tty builder-dind-deployment-7f6db8bd5f-mb4bh -- /bin/sh
+## tips ##
+
+If you want to create something in k8s without saving a file on a disk:
+
+```bash
+cat <<EOF | kubectl apply -f - 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dockerfile-configmap2
+data:
+  Dockerfile: |
+    FROM hello-world
+    CMD ["echo", "Hello, World!"]
+EOF
+```
 
 ## softwares ##
 
