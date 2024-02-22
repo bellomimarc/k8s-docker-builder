@@ -29,3 +29,4 @@ EOF
 
 - kubectl
 - minikube
+- kaniko <https://github.com/GoogleContainerTools/kaniko>

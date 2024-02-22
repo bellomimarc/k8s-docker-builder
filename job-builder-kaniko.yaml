@@ -14,18 +14,22 @@ spec:
       - name: dockerfile-volume
         configMap:
           name: dockerfile-configmap
+      - name: credentials-volume
+        configMap:
+          name: credentials-configmap
       containers:
       - name: builder-kaniko
         image: gcr.io/kaniko-project/executor:latest
         args:
         - "--dockerfile=/dockerfile/Dockerfile"
         - "--context=dir:///workspace"
-        - "--no-push"
-        - "--destination=kaniko-image:latest"
+        - "--destination=i999999.artifact-registry.corvina.cloud/4a19535f-0eb7-4953-a058-585490337ff9_100/hello-kaniko:latest"
         # command: ["/kaniko/executor"]
         volumeMounts:
         - name: dockerfile-volume
           mountPath: /dockerfile
+        - name: credentials-volume
+          mountPath: /kaniko/.docker
         resources:
           limits:
             memory: "1Gi"
