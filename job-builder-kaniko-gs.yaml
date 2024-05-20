@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-builder-kaniko
+spec:
+  ttlSecondsAfterFinished: 100
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: builder-kaniko
+    spec:
+      restartPolicy: Never
+      volumes:
+      - name: credentials-volume
+        configMap:
+          name: credentials-configmap
+      - name: kaniko-secret
+        secret:
+          secretName: kaniko-secret
+      containers:
+      - name: builder-kaniko
+        image: gcr.io/kaniko-project/executor:latest
+        args:
+        - "--dockerfile=/hello-world-app/Dockerfile"
+        - "--context=gs://builder-bucket-internal-qa/_test/hello-world-app.tar.gz"
+        - "--destination=f058251.artifact-registry.corvina.cloud/a327e99f-f188-4673-97b3-9fd510a33d30_43676/hello-kaniko:latest"
+        # command: ["/kaniko/executor"]
+        volumeMounts:
+        - name: kaniko-secret
+          mountPath: /secret
+        - name: credentials-volume
+          mountPath: /kaniko/.docker
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secret/kaniko-secret.json
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "64Mi"
+            cpu: "250m"

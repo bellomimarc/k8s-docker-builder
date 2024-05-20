@@ -25,6 +25,12 @@ data:
 EOF
 ```
 
+If you want to create a secret from json:
+
+```bash
+kubectl create secret generic kaniko-secret --from-file=<path to kaniko-secret.json>
+```
+
 ## softwares ##
 
 - kubectl
